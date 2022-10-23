@@ -14,12 +14,28 @@ const HotelSchema = new Schema(
 		phoneNumber: {
 			type: Schema.Types.String,
 			required: true,
+			unique: true,
+		},
+		staffRoles: {
+			type: [Schema.Types.String],
+			required: false,
+			default: null,
 		},
 		otp: {
 			type: Schema.Types.String,
 		},
+		onBoardingDone: {
+			type: Schema.Types.Boolean,
+			required: false,
+			default: false,
+		},
 		otpValidity: {
 			type: Schema.Types.Number,
+		},
+		isDeleted: {
+			type: Schema.Types.Boolean,
+			required: false,
+			default: false,
 		},
 	},
 	{

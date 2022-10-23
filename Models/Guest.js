@@ -71,9 +71,16 @@ const OtherChargeSchema = new Schema(
 
 const GuestSchema = new Schema(
 	{
-		user: {
-			type: Schema.Types.ObjectId,
-			ref: "User",
+		name: {
+			type: Schema.Types.String,
+			required: true,
+		},
+		email: {
+			type: Schema.Types.String,
+			required: false,
+		},
+		phoneNumber: {
+			type: Schema.Types.String,
 			required: true,
 		},
 		hotel: {
