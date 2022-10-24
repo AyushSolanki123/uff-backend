@@ -16,11 +16,6 @@ const HotelSchema = new Schema(
 			required: true,
 			unique: true,
 		},
-		staffRoles: {
-			type: [Schema.Types.String],
-			required: false,
-			default: null,
-		},
 		otp: {
 			type: Schema.Types.String,
 		},

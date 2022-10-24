@@ -20,6 +20,16 @@ const StaffSchema = new Schema(
 			type: Schema.Types.String,
 			required: true,
 		},
+		status: {
+			type: Schema.Types.String,
+			required: true,
+			enum: ["PENDING", "APPROVED"],
+			default: "PENDING",
+		},
+		joinDate: {
+			type: Schema.Types.Date,
+			required: true,
+		},
 		isDeleted: {
 			type: Schema.Types.Boolean,
 			required: true,

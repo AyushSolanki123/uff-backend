@@ -8,23 +8,18 @@ const RoomSchema = new Schema(
 			ref: "Hotel",
 			required: true,
 		},
-		number: {
-			type: Schema.Types.Number,
-			required: true,
+		staffs: {
+			type: [Schema.Types.ObjectId],
+			ref: "Staff",
+			required: false,
 		},
-		rate: {
-			type: Schema.Types.Number,
-			required: true,
+		roles: {
+			type: [Schema.Types.String],
+			required: false,
 		},
-		type: {
+		inviteLink: {
 			type: Schema.Types.String,
 			required: true,
-		},
-		status: {
-			type: Schema.Types.String,
-			required: true,
-			enum: ["AVAILABLE", "NEEDS_CLEANING", "UNDER_CLEANING", "OCCUPIED"],
-			default: "AVAILABLE",
 		},
 		isDeleted: {
 			type: Schema.Types.Boolean,
