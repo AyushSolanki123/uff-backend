@@ -26,6 +26,12 @@ const StaffSchema = new Schema(
 			enum: ["PENDING", "APPROVED"],
 			default: "PENDING",
 		},
+		workState: {
+			type: Schema.Types.String,
+			required: true,
+			enum: ["IDLE", "ENGAGED"],
+			default: "IDLE",
+		},
 		joinDate: {
 			type: Schema.Types.Date,
 			required: true,
