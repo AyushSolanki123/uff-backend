@@ -103,7 +103,8 @@ const GuestSchema = new Schema(
 		rooms: {
 			type: [Schema.Types.ObjectId],
 			ref: "Room",
-			required: true,
+			required: false,
+			default: null,
 		},
 		amount: {
 			type: Schema.Types.Number,
