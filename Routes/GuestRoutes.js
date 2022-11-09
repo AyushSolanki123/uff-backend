@@ -23,4 +23,32 @@ router.post(
 	guestController.createGuest
 );
 
+router.post(
+	"/list",
+	[body("hotel").notEmpty(), body("status").notEmpty()],
+	verifyToken,
+	guestController.listGuestFilteredByStatus
+);
+
+router.post(
+	"/search",
+	[body("hotel").notEmpty(), body("name").notEmpty()],
+	verifyToken,
+	guestController.searchGuestByName
+);
+
+router.put(
+	"/update",
+	[body("guestId").notEmpty(), body("data").isObject()],
+	verifyToken,
+	guestController.updateGuest
+);
+
+router.post(
+	"/room/allot",
+	[body("guestId").notEmpty(), body("rooms").isArray()],
+	verifyToken,
+	guestController.allotRoomToGuest
+);
+
 module.exports = router;

@@ -17,4 +17,6 @@ router.post(
 	roomController.createRoom
 );
 
+router.get("/list", verifyToken, roomController.listRooms);
+
 module.exports = router;

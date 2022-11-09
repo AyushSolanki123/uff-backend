@@ -29,6 +29,29 @@ function createRoom(req, res, next) {
 	}
 }
 
+function listRooms(req, res, next) {
+	const { hotel } = req.query;
+
+	RoomService.listRooms(hotel)
+		.then((rooms) => {
+			res.status(200);
+			res.json({
+				data: rooms,
+				message: "Rooms fetched successfully",
+			});
+		})
+		.catch((error) => {
+			logger.error("Failed in list rooms: " + JSON.stringify(error));
+			next(
+				new ErrorBody(
+					error.statusCode || 500,
+					error.errorMessage || "Internal Server Error"
+				)
+			);
+		});
+}
+
 module.exports = {
 	createRoom: createRoom,
+	listRooms: listRooms,
 };
