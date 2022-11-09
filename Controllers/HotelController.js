@@ -213,9 +213,37 @@ function onBoardHotel(req, res, next) {
 	}
 }
 
+function getHotelById(req, res, next) {
+	const { errors } = validationResult(req);
+	if (errors.length > 0) {
+		logger.error("Error in get hotel request body");
+		next(new ErrorBody(400, "Invalid values in the form"));
+	} else {
+		const { hotelId } = req.body;
+		HotelService.getHotelById(hotelId)
+			.then((response) => {
+				res.status(200);
+				res.json({
+					data: response,
+					message: "Hotel fecthed Successfully",
+				});
+			})
+			.catch((error) => {
+				logger.error("Failed in get Hotel: " + JSON.stringify(error));
+				next(
+					new ErrorBody(
+						error.statusCode || 500,
+						error.errorMessage || "Internal Server Error"
+					)
+				);
+			});
+	}
+}
+
 module.exports = {
 	registerHotel: registerHotel,
 	loginHotel: loginHotel,
 	onBoardHotel: onBoardHotel,
 	verifyOtp: verifyOtp,
+	getHotelById: getHotelById,
 };

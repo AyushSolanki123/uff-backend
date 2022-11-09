@@ -27,9 +27,17 @@ function getHotelbyPhoneNumber(phoneNumber) {
 	return Hotel.findOne({ phoneNumber: phoneNumber, isDeleted: false });
 }
 
+function getHotelById(hotel) {
+	return Hotel.findOne({
+		_id: mongoose.Types.ObjectId(hotel),
+		isDeleted: false,
+	});
+}
+
 module.exports = {
 	registerHotel: registerHotel,
 	onBoardHotel: onBoardHotel,
 	updateHotel: updateHotel,
+	getHotelById: getHotelById,
 	getHotelbyPhoneNumber: getHotelbyPhoneNumber,
 };

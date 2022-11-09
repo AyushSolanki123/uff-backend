@@ -7,6 +7,13 @@ const hotelController = require("../Controllers/HotelController");
 const { verifyToken } = require("../MiddleWare/VerifyToken");
 
 router.post(
+	"/get",
+	[body("hotelId").notEmpty()],
+	verifyToken,
+	hotelController.getHotelById
+);
+
+router.post(
 	"/register",
 	[body("name").notEmpty(), body("phoneNumber").isMobilePhone()],
 	hotelController.registerHotel

@@ -26,6 +26,17 @@ const HotelSchema = new Schema(
 		},
 		otpValidity: {
 			type: Schema.Types.Number,
+			required: false,
+		},
+		roles: {
+			// Hotel will have their own roles
+			type: [Schema.Types.String],
+			required: false,
+		},
+		inviteLink: {
+			type: Schema.Types.String,
+			required: true,
+			default: "http://localhost:5000/api/v1",
 		},
 		isDeleted: {
 			type: Schema.Types.Boolean,

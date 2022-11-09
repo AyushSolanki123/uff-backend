@@ -20,6 +20,10 @@ const StaffSchema = new Schema(
 			type: Schema.Types.String,
 			required: true,
 		},
+		phoneNumber: {
+			type: Schema.Types.String,
+			required: false,
+		},
 		status: {
 			type: Schema.Types.String,
 			required: true,
