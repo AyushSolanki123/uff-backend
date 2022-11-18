@@ -30,7 +30,8 @@ const HotelSchema = new Schema(
 		},
 		roles: {
 			// Hotel will have their own roles
-			type: [Schema.Types.String],
+			type: [Schema.Types.ObjectId],
+			ref: "Role",
 			required: false,
 		},
 		inviteLink: {

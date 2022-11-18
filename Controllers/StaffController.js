@@ -166,12 +166,94 @@ function addRole(req, res, next) {
 			.then((response) => {
 				res.status(200);
 				res.json({
-					staff: response,
-					message: "Staff removed Successfully",
+					hotel: response,
+					message: "Role added Successfully",
 				});
 			})
 			.catch((error) => {
-				logger.error("Failed in removed Staff" + JSON.stringify(error));
+				logger.error("Failed in add role" + JSON.stringify(error));
+				next(
+					new ErrorBody(
+						error.statusCode || 500,
+						error.errorMessage || "Server error occurred"
+					)
+				);
+			});
+	}
+}
+
+function editRole(req, res, next) {
+	const { errors } = validationResult(req);
+	if (errors.length > 0) {
+		logger.error("Error in edit role request body");
+		next(new ErrorBody(400, "Invalid values in the form"));
+	} else {
+		const { hotel, roleId, role } = req.body;
+		StaffService.editRole(hotel, roleId, role)
+			.then((response) => {
+				res.status(200);
+				res.json({
+					role: response,
+					message: "Role Edited Successfully",
+				});
+			})
+			.catch((error) => {
+				logger.error("Failed in edit role" + JSON.stringify(error));
+				next(
+					new ErrorBody(
+						error.statusCode || 500,
+						error.errorMessage || "Server error occurred"
+					)
+				);
+			});
+	}
+}
+
+function listRoles(req, res, next) {
+	const { hotelId } = req.params;
+	StaffService.listRoles(hotelId)
+		.then((roles) => {
+			res.status(200);
+			res.json({
+				data: roles,
+				message: "Roles fetched successfully",
+			});
+		})
+		.catch((error) => {
+			logger.error("Failed in list role" + JSON.stringify(error));
+			next(
+				new ErrorBody(
+					error.statusCode || 500,
+					error.errorMessage || "Server error occurred"
+				)
+			);
+		});
+}
+
+function searchStaff(req, res, next) {
+	const { errors } = validationResult(req);
+	if (errors.length > 0) {
+		logger.error("Error in search staff request body");
+		next(new ErrorBody(400, "Invalid values in the form"));
+	} else {
+		const { hotel, firstName } = req.body;
+		let searchBody = {
+			firstName: firstName,
+		};
+		if (req.body.lastName) {
+			searchBody.lastName = req.body.lastName;
+		}
+		StaffService.searchStaff(hotel, searchBody)
+			.then((staffs) => {
+				res.status(200);
+				res.json({
+					data: staffs,
+					message: "Staff Fetched successfully",
+				});
+			})
+			.catch((error) => {
+				console.log(error);
+				logger.error("Failed in search staff" + JSON.stringify(error));
 				next(
 					new ErrorBody(
 						error.statusCode || 500,
@@ -184,8 +266,11 @@ function addRole(req, res, next) {
 
 module.exports = {
 	addRole: addRole,
+	editRole: editRole,
+	listRoles: listRoles,
 	addStaff: addStaff,
 	editStaff: editStaff,
+	searchStaff: searchStaff,
 	removeStaff: removeStaff,
 	listAllStaff: listAllStaff,
 	listStaffWithRoles: listStaffWithRoles,

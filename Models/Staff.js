@@ -17,8 +17,10 @@ const StaffSchema = new Schema(
 			required: false,
 		},
 		role: {
-			type: Schema.Types.String,
-			required: true,
+			type: Schema.Types.ObjectId,
+			ref: "Role",
+			required: false,
+			default: null,
 		},
 		phoneNumber: {
 			type: Schema.Types.String,
