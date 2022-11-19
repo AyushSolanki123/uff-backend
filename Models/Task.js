@@ -19,12 +19,14 @@ const TaskSchema = new Schema(
 		room: {
 			type: Schema.Types.ObjectId,
 			ref: "Room",
-			required: true,
+			required: false,
+			default: null,
 		},
 		staff: {
 			type: Schema.Types.ObjectId,
 			ref: "Staff",
-			required: true,
+			required: false,
+			default: null,
 		},
 		status: {
 			type: Schema.Types.String,
@@ -49,16 +51,16 @@ const TaskSchema = new Schema(
 			type: Schema.Types.String,
 			required: false,
 		},
-		isOrder: {
-			type: Schema.Types.Boolean,
-			required: false,
-			default: false,
-		},
-		isService: {
-			type: Schema.Types.Boolean,
-			required: false,
-			default: false,
-		},
+		// isOrder: {
+		// 	type: Schema.Types.Boolean,
+		// 	required: false,
+		// 	default: false,
+		// },
+		// isService: {
+		// 	type: Schema.Types.Boolean,
+		// 	required: false,
+		// 	default: false,
+		// },
 		isDeleted: {
 			type: Schema.Types.Boolean,
 			required: true,

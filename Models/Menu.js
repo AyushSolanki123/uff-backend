@@ -11,13 +11,13 @@ const MenuSchema = new Schema(
 		categories: {
 			type: [Schema.Types.ObjectId],
 			ref: "Category",
-			required: true,
+			required: false,
 			default: null,
 		},
 		items: {
 			type: [Schema.Types.ObjectId],
 			ref: "MenuItem",
-			required: true,
+			required: false,
 			default: null,
 		},
 		isService: {

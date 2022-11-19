@@ -117,6 +117,50 @@ function listStaffWithRoles(hotel) {
 	]);
 }
 
+function listStaffWithWorkStates(hotel) {
+	return Staff.aggregate([
+		{
+			$match: {
+				isDeleted: false,
+				hotel: mongoose.Types.ObjectId(hotel),
+			},
+		},
+		{
+			$lookup: {
+				from: "roles",
+				localField: "role",
+				foreignField: "_id",
+				as: "role",
+			},
+		},
+		{
+			$unwind: {
+				path: "$role",
+				preserveNullAndEmptyArrays: true,
+			},
+		},
+		{
+			$group: {
+				_id: "$workState",
+				data: {
+					$push: {
+						_id: "$_id",
+						firstName: "$firstName",
+						lastName: "$lastName",
+						phoneNumber: "$phoneNumber",
+						status: "$status",
+						role: "$role",
+						joinedAt: "$joinDate",
+					},
+				},
+				count: {
+					$sum: 1,
+				},
+			},
+		},
+	]);
+}
+
 function listAllStaffs(hotel) {
 	return Staff.find({
 		isDeleted: false,
@@ -232,4 +276,5 @@ module.exports = {
 	listAllStaffs: listAllStaffs,
 	listStaffWithRoles: listStaffWithRoles,
 	listStaffWithStatus: listStaffWithStatus,
+	listStaffWithWorkStates: listStaffWithWorkStates,
 };

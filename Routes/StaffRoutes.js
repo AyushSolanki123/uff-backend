@@ -30,6 +30,13 @@ router.post(
 );
 
 router.post(
+	"/list/workState",
+	[body("hotel").notEmpty()],
+	verifyToken,
+	staffController.listStaffWithWorkStates
+);
+
+router.post(
 	"/search/staff",
 	[body("hotel").notEmpty(), body("firstName").notEmpty()],
 	verifyToken,

@@ -81,6 +81,32 @@ function listStaffWithStatus(req, res, next) {
 	}
 }
 
+function listStaffWithWorkStates(req, res, next) {
+	const { errors } = validationResult(req);
+	if (errors.length > 0) {
+		logger.error("Error in list Staff request body");
+		next(new ErrorBody(400, "Invalid values in the form"));
+	} else {
+		StaffService.listStaffWithWorkStates(req.body.hotel)
+			.then((response) => {
+				res.status(200);
+				res.json({
+					staff: response,
+					message: "Staff Fetched Successfully",
+				});
+			})
+			.catch((error) => {
+				logger.error("Failed in list Staff" + JSON.stringify(error));
+				next(
+					new ErrorBody(
+						error.statusCode || 500,
+						error.errorMessage || "Server error occurred"
+					)
+				);
+			});
+	}
+}
+
 function addStaff(req, res, next) {
 	const { errors } = validationResult(req);
 	if (errors.length > 0) {
@@ -275,4 +301,5 @@ module.exports = {
 	listAllStaff: listAllStaff,
 	listStaffWithRoles: listStaffWithRoles,
 	listStaffWithStatus: listStaffWithStatus,
+	listStaffWithWorkStates: listStaffWithWorkStates,
 };
