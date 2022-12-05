@@ -3,9 +3,9 @@ const Schema = mongoose.Schema;
 
 const CategorySchema = new Schema(
 	{
-		hotel: {
+		menu: {
 			type: Schema.Types.ObjectId,
-			ref: "Hotel",
+			ref: "Menu",
 			required: true,
 		},
 		name: {

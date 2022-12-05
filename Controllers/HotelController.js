@@ -5,6 +5,7 @@ const { logger } = require("../Utils/Logger");
 const { generateAuthPairs, validateAuthToken } = require("../Utils/Helper");
 const otpGenerator = require("otp-generator");
 const moment = require("moment");
+const MenuService = require("../Services/MenuService");
 
 function registerHotel(req, res, next) {
 	const { errors } = validationResult(req.body);
@@ -16,6 +17,7 @@ function registerHotel(req, res, next) {
 		next(new ErrorBody(400, "Invalid values in the form"));
 	} else {
 		const { name, phoneNumber } = req.body;
+		let _responseBody = {};
 		HotelService.getHotelbyPhoneNumber(phoneNumber)
 			.then((hotel) => {
 				if (hotel) {
@@ -41,14 +43,25 @@ function registerHotel(req, res, next) {
 				}
 			})
 			.then((response) => {
+				_responseBody = Object.assign(_responseBody, {
+					hotel: response,
+				});
+				console.log(response._id);
+				return MenuService.createMenu(response._id);
+			})
+			.then((response) => {
 				//TODO: Send SMS to registered user to verify phone Number
+				_responseBody = Object.assign(_responseBody, {
+					menu: response,
+				});
 				res.status(200);
 				res.json({
-					data: response,
+					data: _responseBody,
 					message: "Hotel registered Successfully",
 				});
 			})
 			.catch((error) => {
+				console.log(error);
 				logger.error(
 					"Failed in register Hotel: " + JSON.stringify(error)
 				);
