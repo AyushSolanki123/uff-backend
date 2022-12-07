@@ -1,4 +1,5 @@
 const { default: mongoose } = require("mongoose");
+const Staff = require("../Models/Staff").model;
 const Rating = require("../Models/Rating").model;
 const Guest = require("../Models/Guest").model;
 const Order = require("../Models/Order").model;
@@ -6,12 +7,45 @@ const ErrorBody = require("../Utils/ErrorBody");
 const { logger } = require("../Utils/Logger");
 
 function createOrder(reqBody) {
-    return Order.findByIdAndUpdate(mongoose.Types.ObjectId(), reqBody, {
-        new: true,
-        upsert: true,
-        runValidators: true,
-        setDefaultsOnInsert: true,
-    }).populate(["room", "staff", "guest", "staff", "orderItems.menuItem"]);
+    return new Promise((resolve, reject) => {
+        const { staff } = reqBody;
+        Staff.findByIdAndUpdate(
+            mongoose.Types.ObjectId(staff),
+            { $set: { workState: "ENGAGED" } },
+            { new: true }
+        )
+            .then((staff) => {
+                reqBody = Object.assign(reqBody, { staff: staff._id });
+                return Order.findByIdAndUpdate(
+                    mongoose.Types.ObjectId(),
+                    reqBody,
+                    {
+                        new: true,
+                        upsert: true,
+                        runValidators: true,
+                        setDefaultsOnInsert: true,
+                    }
+                ).populate([
+                    "room",
+                    "staff",
+                    "guest",
+                    "staff",
+                    "orderItems.menuItem",
+                ]);
+            })
+            .then((order) => {
+                resolve(order);
+            })
+            .catch((error) => {
+                logger.error("Failed in create Order: " + error.message);
+                reject(
+                    new ErrorBody(
+                        error.status || 500,
+                        error.message || "Internal Server Error"
+                    )
+                );
+            });
+    });
 }
 
 function editOrder(orderId, reqBody) {
