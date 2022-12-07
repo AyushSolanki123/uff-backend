@@ -7,35 +7,42 @@ const hotelController = require("../Controllers/HotelController");
 const { verifyToken } = require("../MiddleWare/VerifyToken");
 
 router.post(
-	"/get",
-	[body("hotelId").notEmpty()],
-	verifyToken,
-	hotelController.getHotelById
+    "/get",
+    [body("hotelId").notEmpty()],
+    verifyToken,
+    hotelController.getHotelById
 );
 
 router.post(
-	"/register",
-	[body("name").notEmpty(), body("phoneNumber").isMobilePhone()],
-	hotelController.registerHotel
+    "/callout",
+    [body("hotelId").notEmpty()],
+    verifyToken,
+    hotelController.dashboardCallouts
 );
 
 router.post(
-	"/login",
-	[body("phoneNumber").isMobilePhone()],
-	hotelController.loginHotel
+    "/register",
+    [body("name").notEmpty(), body("phoneNumber").isMobilePhone()],
+    hotelController.registerHotel
 );
 
 router.post(
-	"/verifyOtp",
-	[body("phoneNumber").isMobilePhone(), body("otp").isNumeric()],
-	hotelController.verifyOtp
+    "/login",
+    [body("phoneNumber").isMobilePhone()],
+    hotelController.loginHotel
 );
 
 router.post(
-	"/onboard",
-	[body("hotelId").notEmpty()],
-	verifyToken,
-	hotelController.onBoardHotel
+    "/verifyOtp",
+    [body("phoneNumber").isMobilePhone(), body("otp").isNumeric()],
+    hotelController.verifyOtp
+);
+
+router.post(
+    "/onboard",
+    [body("hotelId").notEmpty()],
+    verifyToken,
+    hotelController.onBoardHotel
 );
 
 module.exports = router;
