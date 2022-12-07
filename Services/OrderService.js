@@ -1,4 +1,5 @@
 const { default: mongoose } = require("mongoose");
+const OrderItem = require("../Models/OrderItem").model;
 const Staff = require("../Models/Staff").model;
 const Rating = require("../Models/Rating").model;
 const Guest = require("../Models/Guest").model;
@@ -9,6 +10,7 @@ const { logger } = require("../Utils/Logger");
 function createOrder(reqBody) {
     return new Promise((resolve, reject) => {
         const { staff } = reqBody;
+        let _promiseArray = [];
         Staff.findByIdAndUpdate(
             mongoose.Types.ObjectId(staff),
             { $set: { workState: "ENGAGED" } },
@@ -16,6 +18,14 @@ function createOrder(reqBody) {
         )
             .then((staff) => {
                 reqBody = Object.assign(reqBody, { staff: staff._id });
+                reqBody.orderItems.forEach((item) => {
+                    item = createOrderItems(item);
+                    _promiseArray.push(item);
+                });
+                return Promise.all(_promiseArray);
+            })
+            .then((orderItems) => {
+                reqBody = Object.assign(reqBody, { orderItems: orderItems });
                 return Order.findByIdAndUpdate(
                     mongoose.Types.ObjectId(),
                     reqBody,
@@ -30,6 +40,7 @@ function createOrder(reqBody) {
                     "staff",
                     "guest",
                     "staff",
+                    "orderItems",
                     "orderItems.menuItem",
                 ]);
             })
@@ -46,6 +57,10 @@ function createOrder(reqBody) {
                 );
             });
     });
+}
+
+function createOrderItems(reqBody) {
+    return OrderItem.create(reqBody);
 }
 
 function editOrder(orderId, reqBody) {
