@@ -27,6 +27,10 @@ function updateHotel(hotelId, reqBody) {
     );
 }
 
+function getHotelbyEmail(email) {
+    return Hotel.findOne({ email: email, isDeleted: false });
+}
+
 function getHotelbyPhoneNumber(phoneNumber) {
     return Hotel.findOne({ phoneNumber: phoneNumber, isDeleted: false });
 }
@@ -154,6 +158,7 @@ module.exports = {
     updateHotel: updateHotel,
     getHotelById: getHotelById,
     dashboardCallouts: dashboardCallouts,
+    getHotelbyEmail: getHotelbyEmail,
     getHotelbyPhoneNumber: getHotelbyPhoneNumber,
     getHotelFoodAndServiceOrders: getHotelFoodAndServiceOrders,
 };

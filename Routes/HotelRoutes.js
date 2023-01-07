@@ -22,13 +22,18 @@ router.post(
 
 router.post(
     "/register",
-    [body("name").notEmpty(), body("phoneNumber").isMobilePhone()],
+    [
+        body("name").notEmpty(),
+        body("phoneNumber").isMobilePhone(),
+        body("email").notEmpty(),
+        body("password").notEmpty(),
+    ],
     hotelController.registerHotel
 );
 
 router.post(
     "/login",
-    [body("phoneNumber").isMobilePhone()],
+    [body("email").notEmpty(), body("password").notEmpty()],
     hotelController.loginHotel
 );
 

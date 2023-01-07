@@ -1,6 +1,7 @@
 const HotelService = require("../Services/HotelService");
 const { validationResult } = require("express-validator");
 const ErrorBody = require("../Utils/ErrorBody");
+const bcrypt = require("bcrypt");
 const { logger } = require("../Utils/Logger");
 const { generateAuthPairs, validateAuthToken } = require("../Utils/Helper");
 const otpGenerator = require("otp-generator");
@@ -16,9 +17,9 @@ function registerHotel(req, res, next) {
         );
         next(new ErrorBody(400, "Invalid values in the form"));
     } else {
-        const { name, phoneNumber } = req.body;
+        const { name, phoneNumber, email, password } = req.body;
         let _responseBody = {};
-        HotelService.getHotelbyPhoneNumber(phoneNumber)
+        HotelService.getHotelbyEmail(email)
             .then((hotel) => {
                 if (hotel) {
                     throw new ErrorBody(
@@ -26,21 +27,34 @@ function registerHotel(req, res, next) {
                         "The hotel already exists, please login again"
                     );
                 } else {
-                    const _otp = otpGenerator.generate(6, {
-                        specialChars: false,
-                        upperCaseAlphabets: false,
-                        lowerCaseAlphabets: false,
-                    });
-                    const _otpValidMoment = moment();
-                    _otpValidMoment.add(1, "day");
-                    const reqBody = {
-                        name: name,
-                        phoneNumber: phoneNumber,
-                        otp: _otp,
-                        otpValidity: _otpValidMoment.valueOf(),
-                    };
-                    return HotelService.registerHotel(reqBody);
+                    // uncomment in case of otp verification
+
+                    // const _otp = otpGenerator.generate(6, {
+                    //     specialChars: false,
+                    //     upperCaseAlphabets: false,
+                    //     lowerCaseAlphabets: false,
+                    // });
+                    // const _otpValidMoment = moment();
+                    // _otpValidMoment.add(1, "day");
+                    // const reqBody = {
+                    //     name: name,
+                    //     phoneNumber: phoneNumber,
+                    //     otp: _otp,
+                    //     otpValidity: _otpValidMoment.valueOf(),
+                    // };
+
+                    return bcrypt.hash(password, 10);
                 }
+            })
+            .then((password) => {
+                const reqBody = {
+                    name: name,
+                    phoneNumber: phoneNumber,
+                    email: email,
+                    password: password,
+                };
+
+                return HotelService.registerHotel(reqBody);
             })
             .then((response) => {
                 _responseBody = Object.assign(_responseBody, {
@@ -81,22 +95,13 @@ function loginHotel(req, res, next) {
         logger.error("Error in logging hotel in: ", JSON.stringify(errors));
         next(new ErrorBody(400, "Invalid values in the form"));
     } else {
-        const { phoneNumber } = req.body;
+        const { email, password } = req.body;
         let _hotel = null;
-        HotelService.getHotelbyPhoneNumber(phoneNumber)
+        HotelService.getHotelbyEmail(email)
             .then((hotel) => {
                 if (hotel) {
-                    const _otp = otpGenerator.generate(6, {
-                        specialChars: false,
-                        upperCaseAlphabets: false,
-                        lowerCaseAlphabets: false,
-                    });
-                    const _otpValidMoment = moment();
-                    _otpValidMoment.add(1, "day");
-                    return HotelService.updateHotel(hotel._id, {
-                        otp: _otp,
-                        otpValidity: _otpValidMoment.valueOf(),
-                    });
+                    _hotel = hotel;
+                    return bcrypt.compare(password, hotel.password);
                 } else {
                     throw new ErrorBody(
                         401,
@@ -105,15 +110,16 @@ function loginHotel(req, res, next) {
                 }
             })
             .then((response) => {
-                // TODO: Send and verify OTP to user for login
+                // TODO: Send and verify OTP to user for login in case of OTP
                 if (response) {
-                    _hotel = response;
                     const authPayload = {
-                        phoneNumber: response.phoneNumber,
+                        email: email,
+                        password: password,
                         type: "auth",
                     };
                     const refreshPayload = {
-                        phoneNumber: response.phoneNumber,
+                        email: email,
+                        password: password,
                         type: "refresh",
                     };
                     return generateAuthPairs(authPayload, refreshPayload);
