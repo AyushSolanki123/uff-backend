@@ -105,6 +105,11 @@ function listCategoryWithItemCount(menuId) {
                 },
             },
         },
+        {
+            $sort: {
+                _id: 1,
+            },
+        },
     ]);
 }
 
